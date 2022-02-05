@@ -1,53 +1,45 @@
-# decrypt-otpauth-files
+# Offline Backup for OTPAuth
 
-This tool allows for decrypting the encrypted backups/account files created by [OTP Auth for iOS](http://cooperrs.de/otpauth.html).
+This is a fork from [https://github.com/CooperRS/decrypt-otpauth-files](https://github.com/CooperRS/decrypt-otpauth-files) originally called `decrypt-otpauth-files` by Roland Moers.
 
-If you find problems with the file format (in particular security related issues), do not hesitate and file an issue.
+This tool uses the encrypted backups/account files created by [OTP Auth for iOS](http://cooperrs.de/otpauth.html) and then stores the relevant QR for recovery  a PDF file for printing. On paper and offline.
 
-## Requirements
-
-  - [Python 3.7](https://www.python.org/downloads/)
-  - [pipenv](https://github.com/pypa/pipenv)
-  - An encrypted OTP Auth backup/account file
+I use this printed piece of paper together with some printed out recovery codes from the webservices themselves to make sure I can always access my data if I should lose my phone or worse. I also used this to import OTP codes into BitWarden/VaultWarden etc. others might alos work but have not been tested. 
 
 ## Usage
 
-1. Clone repository
+This is a [poetry project](https://python-poetry.org/). Install the project using
 
 ```
-git clone https://github.com/CooperRS/decrypt-otpauth-files.git
-cd decrypt-otpauth-files
+poetry install
 ```
 
-2. Install dependencies
+or use the provided `requirements.txt` and `pip` to install. There is no executable entry point defined at the moment. Feel free to add a PR.
 
+The __create_recovery.py__ command takes the path to the OTPAuth backup file which you exported from the app and the path to the pdf file to write. You will be prompted to enter your password to decrypt the backed up file.
+
+    Usage: create_recovery.py [OPTIONS] BACKUP_FILE OUTPUT_FILE
+
+    Opens the OTPAuth backup file given by 'BACKUP_FILE' for reading and writes
+    QR codes for printing into 'OUTPUT_FILE'. Will prompt for password to
+    decrypt the OTPAuth backup file  if not provided via commandline.
+
+    Options:
+    --password TEXT
+    --help           Show this message and exit.
+
+
+Create the pdf as seen in `example/example.pdf` with the following command:
 ```
-pipenv install
+poetry run python create_recovery.py example/example.otpauthdb example.pdf --password abc123
 ```
 
-3. Decrypt your OTP Auth file
+The screenshot below shows a part of the generated PDF.
 
-```
-# Decrypt a full backup file
-pipenv run python decrypt_otpauth.py decrypt_backup --encrypted-otpauth-backup <path to your OTP Auth backup>
-```
+<img alt="Screenshot of the generated PDF file" src="./screenshot.png" width="400" >
 
-```
-# Decrypt a single account export
-pipenv run python decrypt_otpauth.py decrypt_account --encrypted-otpauth-account <path to your OTP Auth account>
-```
 
-## Demo
+__Make sure you test the recovery of your OTP tokens__
 
-The project contains two OTP Auth exports for demo purposes:
+__Absolutely no warranty for lost accounts__
 
-* `backup.otpauthdb`: A complete OTP Auth backup
-* `account.otpauth`: One account exported by OTP Auth
-
-The password for both files is `abc123`.
-
-![example gif](demo.gif)
-
-## Credits
-
-Inspired by [ewdurbin](https://github.com/ewdurbin) and his [evacuate_2STP](https://github.com/ewdurbin/evacuate_2stp) repo.
